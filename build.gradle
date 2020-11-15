@@ -22,7 +22,7 @@ dependencies {
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.4.0'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.4.0'
 	
-	
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
 	compile group: 'ma.glasnost.orika', name: 'orika-core', version: '1.5.4'
 	compile group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.4.8'
 	compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'

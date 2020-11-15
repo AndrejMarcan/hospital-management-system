@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yamiy.hospsys.exceptions.BadRequestException;
+import com.yamiy.hospsys.exceptions.NotFoundException;
 import com.yamiy.hospsys.mappers.BussinesObjectMapper;
+import com.yamiy.hospsys.models.Enumerations.EMPLOYEE_POSITION;
 import com.yamiy.hospsys.models.mongo.dao.Employee;
 import com.yamiy.hospsys.models.mongo.dto.CreateEmployeeRequest;
 import com.yamiy.hospsys.models.mongo.dto.RestEmployee;
@@ -109,6 +111,29 @@ public class EmployeeService {
 		
 		/** Addresses must be distinct */
 		info .setAddress(addresses.stream().distinct().collect(Collectors.toList())); 
+	}
+	
+	/** Update employee positions for former and new head of department 
+	 * @throws NotFoundException */
+	public void updatePositions(Long formerHead, Long newHead) throws NotFoundException {
+		Optional<Employee> formerHeadOfDepartment = employeeRepository.findByEmployeeNumber(formerHead);
+		if(formerHeadOfDepartment.isEmpty()) {
+			throw new NotFoundException("Employee with employee number '" + formerHead.toString() +"' not found.");
+		}
+		
+		Optional<Employee> newHeadOfDepartment = employeeRepository.findByEmployeeNumber(newHead);
+		if(newHeadOfDepartment.isEmpty()) {
+			throw new NotFoundException("Employee with employee number '" + newHead.toString() +"' not found.");
+		}
+		
+		RestEmployee restFormerHead = mapper.map(formerHeadOfDepartment.get(), RestEmployee.class);
+		RestEmployee restNewHead = mapper.map(newHeadOfDepartment.get(), RestEmployee.class);
+		
+		restFormerHead.setPosition(EMPLOYEE_POSITION.DOCTOR);
+		restNewHead.setPosition(EMPLOYEE_POSITION.HEAD_OF_DEPARTMENT);
+		
+		employeeRepository.save(mapper.map(restFormerHead, Employee.class));
+		employeeRepository.save(mapper.map(restNewHead, Employee.class));
 	}
 	
 	/** Check if employee with given number already exists - return true if it does 

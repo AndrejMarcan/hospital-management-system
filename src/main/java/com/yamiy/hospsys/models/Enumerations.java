@@ -7,6 +7,7 @@ public class Enumerations {
 	}
 	
 	public enum EMPLOYEE_POSITION {
+		HEAD_OF_DEPARTMENT,
 		DOCTOR,
 		SISTER
 	}
